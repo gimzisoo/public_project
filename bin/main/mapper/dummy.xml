@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kr.pub.dao.DummyDAO">
+	
+	<select id="getUserIdList" resultType="java.lang.String">
+	select user_id from users
+	</select>
+	
+	<insert id="insertUserHistoryData" useGeneratedKeys="true" keyProperty="historyId" keyColumn="history_id">
+		insert into user_history(user_id, seat_no, login_time, logout_time) 
+		values(#{userId}, #{seatNo}, #{loginTime}, #{logoutTime})
+	</insert>
+	
+	<insert id="insertOrderData" useGeneratedKeys="true" keyProperty="orderId" keyColumn="order_id">
+	    insert into orders (user_id, order_date, code) 
+	    values (#{userId}, #{orderDate},#{code})
+	</insert>
+	
+	<insert id="insertPayment">
+	insert into payment(
+	ORDER_ID,
+	PAYMENT_DATE,
+	PAYMENT_METHOD_CODE,
+	PAYMENT_TYPE_CODE)
+	values(
+	#{orderId},
+	#{paymentDate},
+	#{paymentMethodCode},
+	#{paymentTypeCode}
+	)
+	</insert>
+	
+	<select id="getItemListData" resultType="java.util.Map">
+	select item_id, selling_price from item where item_type_code = 'IT001' and item_id != 'ITEM000001'
+	</select>
+</mapper>
+

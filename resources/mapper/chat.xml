@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kr.pub.dao.ChatDAO">
+	<insert id="insert">
+	    INSERT INTO chat(type, sender, receiver, message, seatNo)
+		VALUES (#{type}, #{sender},#{receiver}, #{message},#{seatNo})
+	</insert>
+	<insert id="test">
+	    INSERT INTO TEST(name, age)
+		VALUES (#{name}, #{age})
+	</insert>
+	
+	<select id="getChatList" resultType="com.kr.pub.dto.ChatDTO">
+		SELECT distinct type, sender, receiver, message, seatNo,
+		TO_CHAR(time, 'YYYY-MM-DD HH24:MI:SS') as time
+	    FROM chat
+		WHERE TRUNC(time) = TRUNC(SYSDATE)
+		ORDER BY time ASC
+	</select>
+	<select id="getChatListById" resultType="com.kr.pub.dto.ChatDTO">
+    SELECT distinct
+        type,
+        sender,
+        receiver,
+        message,
+        seatNo,
+        TO_CHAR(time, 'HH24:MI:SS') AS time
+    FROM
+        chat
+    WHERE
+        TRUNC(time) = TRUNC(SYSDATE)
+        AND sender IN (#{receiver}, 'admin')
+        AND receiver IN (#{receiver}, 'admin')
+    ORDER BY
+        time ASC
+	</select>
+</mapper>

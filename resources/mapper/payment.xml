@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kr.pub.dao.PaymentDAO">
+	<!-- <insert id="insertPayment">
+    	insert into payment (order_id, payment_method_code,payment_type_code) 
+    	values (#{orderId}, 'PM001' , 'PT002')
+	</insert> -->
+
+	<select id="paymentTotalCount" resultType="int">
+		SELECT COUNT(*)
+		FROM payment p
+		JOIN orders o ON p.ORDER_ID = o.ORDER_ID
+		JOIN users u ON o.USER_ID = u.USER_ID
+		JOIN order_history oh ON o.ORDER_ID = oh.ORDER_ID
+		JOIN common_code cc ON p.PAYMENT_TYPE_CODE = cc.CODE
+	</select>
+
+	<insert id="insert">
+	insert into payment(
+	ORDER_ID,
+	PAYMENT_METHOD_CODE,
+	PAYMENT_TYPE_CODE)
+	values(
+	#{orderId},
+	#{paymentMethodCode},
+	#{paymentTypeCode}
+	)
+	</insert>
+	
+	<!-- 매출 내역 -->
+	<select id="salesSearch" resultType="java.util.Map">
+    select 
+	    "paymentId",
+	    "orderId",
+	    "paymentDate",
+	    "uname",
+	    "type",
+	    oh.PRICE AS "price",
+	    oh.PRICE - (oh.PRICE * 0.10) AS "netProfit"
+		from (
+		   SELECT
+		       p.PAYMENT_ID AS "paymentId",
+		       o.ORDER_ID AS "orderId",
+		       TO_CHAR(p.PAYMENT_DATE, 'YYYY-MM-DD') AS "paymentDate",
+		       u.UNAME AS "uname",
+		       cc.TYPE AS "type"
+		   FROM
+		       payment p
+		   JOIN
+		       orders o ON p.ORDER_ID = o.ORDER_ID
+		   JOIN
+		       users u ON o.USER_ID = u.USER_ID
+		   JOIN
+		       common_code cc ON p.PAYMENT_TYPE_CODE = cc.CODE
+	 WHERE
+	    1=1
+	    <!-- startDate, endDate -->
+	    <if test="startDate != null and startDate != ''">
+	       AND p.PAYMENT_DATE BETWEEN TO_DATE(#{startDate} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND TO_DATE(#{endDate} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+	    </if>
+	   	<!-- paymName -->
+	   	<if test="paymentId != null and paymentId != '' ">
+	   		AND p.PAYMENT_ID = #{paymentId}
+	   	</if>
+	   	<!-- orderId -->
+	   	<if test="orderId != null and orderId != '' ">
+	   		AND o.ORDER_ID = #{orderId}
+	   	</if>
+	   	<!-- unme -->
+	   	 <if test="uname != null and uname != '' ">
+	   	 	AND u.UNAME LIKE '%' || #{uname} || '%'
+	   	 </if>	   	 
+	   	 <!-- code -->
+      <if test="code != null and code != ''">
+          AND cc.CODE = #{code}
+      </if>
+		) m           
+		   inner join order_history oh ON oh.ORDER_ID = "orderId" 
+		   ORDER BY
+		       "paymentDate" DESC, "paymentId" DESC
+	</select>
+
+	<select id="salesList" resultType="java.util.Map">
+		SELECT 
+		    "paymentId",
+		    "orderId",
+		    "paymentDate",
+		    "uname",
+		    "type",
+		    oh.PRICE AS "price",
+		    oh.PRICE - (oh.PRICE * 0.10) AS "netProfit"
+		FROM (
+		    SELECT
+		        p.PAYMENT_ID AS "paymentId",
+		        o.ORDER_ID AS "orderId",
+		        TO_CHAR(p.PAYMENT_DATE, 'YYYY-MM-DD') AS "paymentDate",
+		        u.UNAME AS "uname",
+		        cc.TYPE AS "type"
+		    FROM
+		        payment p
+		    JOIN
+		        orders o ON p.ORDER_ID = o.ORDER_ID
+		    JOIN
+		        users u ON o.USER_ID = u.USER_ID
+		    JOIN
+		        common_code cc ON p.PAYMENT_TYPE_CODE = cc.CODE
+		    WHERE
+		        1=1
+		        AND p.PAYMENT_DATE BETWEEN TRUNC(sysdate) AND TRUNC(sysdate) + (1 - 1/24/60/60)
+		) m           
+		INNER JOIN 
+		    order_history oh ON oh.ORDER_ID = m."orderId" 
+		ORDER BY
+		    "paymentDate" DESC, "paymentId" DESC
+	</select>
+
+</mapper>

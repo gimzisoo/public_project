@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kr.pub.dao.ImageDAO">
+
+<insert id="insertImage" useGeneratedKeys="true" keyProperty="imgId" keyColumn="img_id">
+	INSERT INTO image (
+		length,
+		img_name_real,
+		content_type,
+		img_name_org
+	) VALUES (
+		#{length},
+		#{imgNameReal},
+		#{contentType},
+		#{imgNameOrg}
+	)
+</insert>
+
+<select id="getImage" resultType="com.kr.pub.dto.ImageDTO">
+	select * from image where img_id = #{imgId}
+</select>
+
+<delete id="deleteImage">
+	delete from image where img_id = #{imgId}
+</delete>
+
+	
+</mapper>

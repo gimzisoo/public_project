@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kr.pub.dao.UserDAO">
+
+	<!-- erp 회원관리 -->
+	<select id="erpUserList" resultType="java.util.Map">
+		SELECT USER_ID, UNAME, PHONE_NUMBER, LOGOUT_TIME, LOGIN_FAILURE, OAUTH, 
+		       TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE,
+		       CASE WHEN TRUNC(MONTHS_BETWEEN(SYSDATE, LOGOUT_TIME)) >= 6 THEN '휴면계정' ELSE '사용중' END AS ACCOUNT_STATUS
+		FROM users
+		WHERE USER_ID != 'admin'
+		ORDER BY LOGOUT_TIME DESC
+	</select>
+	
+	
+	<select id="getUserList" resultType="com.kr.pub.dto.UserDTO">
+		select * from users
+	</select>
+	<select id="getUser" resultType="com.kr.pub.dto.UserDTO">
+		select u.*, s.seat_no from users u
+		inner join seat s on u.user_id = s.user_id
+		where s.used ='Y' and u.user_id = #{userId}
+		fetch first 1 rows only
+	</select>
+	<select id="findByUserId" resultType="com.kr.pub.dto.UserDTO">
+		select 
+			*
+		from users
+		where user_id = #{userId} 
+	</select> 
+	<select id="findByEmail" resultType="com.kr.pub.dto.UserDTO">
+		select 
+			*
+		from users
+		where email = #{email} 
+	</select> 
+	<select id="login" resultType="com.kr.pub.dto.UserDTO">
+	    SELECT * FROM users WHERE user_id = #{userId} 
+	    <if test="password != null and password != ''">
+	       	    AND password = #{password}
+	    </if>
+	</select>
+
+	<select id="getRemainingTime" resultType="int">
+		SELECT remaining_time FROM users WHERE user_id = #{userId}
+	</select>
+	<update id="updateLoginTime">
+		UPDATE users
+		SET login_time = #{loginTime}
+		WHERE user_id = #{userId}
+	</update>
+	<update id="updateAllTime">
+		UPDATE users
+		SET logout_time = #{logoutTime}, remaining_time = #{remainingTime}
+		WHERE user_id = #{userId}
+	</update>
+	<select id="getLoginFailures" resultType="int">
+        SELECT LOGIN_FAILURE
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+	<update id="failLogin">
+		UPDATE users
+		SET LOGIN_FAILURE = LOGIN_FAILURE + 1
+		WHERE user_id = #{userId}
+	</update>
+	<update id="updateRole">
+		UPDATE users
+		SET ROLE_ID = 'RT003'
+		WHERE user_id = #{userId}
+	</update>
+	<update id="loginSeat">
+		UPDATE seat
+		SET used = 'Y', user_id = #{userId}
+		WHERE seat_no = #{seatNo}
+	</update>
+	<update id="logoutSeat">
+		UPDATE seat
+		SET used = 'N', user_id = null
+		WHERE user_id = #{userId}
+	</update>
+	<insert id="insertMember" >
+		insert into users (
+			user_id
+			,email
+			,oauth
+		) values (
+			 #{userId}
+			,#{email}
+			,#{oauth}
+		) 
+	</insert>
+	
+	<insert id="insertMember2" >
+		insert into users (user_id, uname, password, birthdate, phone_number, email, reg_date)
+		 values (
+			 #{userId}
+			,#{uname}
+			,#{password}
+			,to_date(#{birthdate}, 'YYYY/MM/DD HH24:MI:SS')
+			,#{phonenumber}
+			,#{email}
+			,to_date(#{regDate}, 'YYYY/MM/DD HH24:MI:SS')
+		) 
+	</insert>
+	
+	<insert id="insertUserHistory">
+	insert into user_history (seat_no, user_id, login_time, logout_time) 
+	values(#{seatNo}, #{userId}, #{loginTime}, #{logoutTime} )
+	</insert>
+	<update id="updateUserHistory">
+	update user_history
+	set logout_time = #{logoutTime} 
+	where history_id = (
+		select history_id
+		from user_history 
+		where login_time = (select max(login_time) recent_time from user_history where user_id = #{userId})
+	)
+	</update>
+	<update id="updateRemainingTime">
+	    UPDATE users
+	    SET remaining_time = #{remainingTime}
+	    WHERE user_id = #{userId}
+	</update>
+	
+	<select id="loginCheck">
+	select * from seat where user_id =#{userId}
+	</select>
+	
+	<select id="getUserRole" >
+		select ROLE_ID from users where user_id =#{userId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,171 @@
+.wrap_chat_main{
+	width:400px;
+	height:87s0px;
+	display:inline-block;
+	font-size:15px;
+	vertical-align:top;
+}
+
+#chatList{
+	padding-left:0;
+	margin:0;
+	list-style-type:none;
+	overflow-y:scroll;
+	height:700px;
+	border-top:2px solid #fff;
+}
+#chatList li{
+	padding:10px 20px;
+}
+#chatList h2,#chat h3{
+	display:inline-block;
+	font-size:15px;
+	font-weight:normal;
+}
+#chatList h3{
+	color:#bbb;
+}
+#chatList .entete{
+	margin-bottom:5px;
+	
+}
+#chatList h2{
+	padding-right: 5px;
+	font-size: 16px;
+	font-weight: bold !important;
+	color: #333;
+}
+#chatList .message{
+	padding:10px 20px;
+	max-width:90%;
+	display:inline-block;
+	text-align:left;
+	border-radius:5px;
+}
+#chatList .me{
+	text-align:right;
+}
+#chatList .you .message{
+	background-color:#450877;
+	color: white;
+}
+#chatList .me .message{
+	background-color:#ddd;
+	color: black;
+}
+.message-wrap {
+	position: relative;
+	margin-top: 15px;
+}
+#chatList .triangle{
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 10px 10px 10px;
+}
+#chatList .you .triangle{
+		position: absolute;
+	    top: -10px;
+	    left: 10px;
+		border-color: transparent transparent #450877 transparent;
+}
+#chatList .me .triangle{
+		position: absolute;
+	    top: -10px;
+	    right: 10px;
+		border-color: transparent transparent #ddd transparent;
+}
+/*#chatList h2,#chat p{
+	display:inline-block;
+	font-size:15px;
+	font-weight:normal;
+}
+#chatList h3{
+	color:#bbb;
+}
+#chatList .entete{
+	margin-bottom:5px;
+}
+#chatList .message{
+	padding:10px;
+	max-width:90%;
+	display:inline-block;
+	text-align:left;
+	border-radius:5px;
+}
+#chatList .me{
+	text-align:right;
+}
+#chatList .you .message{
+	background-color:#450877;
+	color: white;
+}
+#chatList .me .message{
+	background-color:#ddd;
+	color: black;
+}
+
+#chatList .me .triangle {
+    border-color: transparent transparent #ddd transparent;
+    margin-left: 318px;
+    position: absolute;
+    top: -10px;
+    right: 10px;
+}
+#chatList .triangle{
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 10px 10px 10px;
+}
+#chatList .you .triangle{
+		position: absolute;
+	    top: -10px;
+	    right: 10px;
+		border-color: transparent transparent #450877 transparent;
+
+}
+#chatList .me .triangle{
+		position: absolute;
+	    top: -10px;
+	    right: 10px;
+		border-color: transparent transparent #ddd transparent;
+}*/
+
+.wrap_chat_main footer{
+	height:20%;
+}
+.wrap_chat_main footer textarea{
+	resize:none;
+	border:none;
+	width:70%;
+	height:135px;
+	border-radius:3px;
+	padding:20px;
+	font-size:13px;
+	margin-bottom:13px;
+	float: left;
+}
+.wrap_chat_main footer textarea::placeholder{
+	color:#ddd;
+}
+.wrap_chat_main footer a{
+	display: block;
+	text-decoration:none;
+	text-transform:uppercase;
+	font-weight:bold;
+	color:#450877;
+	float: left;
+	width: 100px;
+    line-height: 82px;
+    text-align: center;
+}
+.wrap_chat_main footer textarea:focus {
+	outline: 0;
+}
+.seatSelector option {
+	text-align: center;
+}
+.seatSelector:focus {
+	outline: 0;
+}
